@@ -41,27 +41,19 @@ $('#kind_food_selector').on('change', function() {
   render_to_map(data_markers, this.value);
 });
 function render_to_map(data_markers, filter){
-	if(marker){ //	FASE 3.2	1) Limpio todos los marcadores
-		markers.clearLayers();
-	}
-	if (first_time) {
+	markers.clearLayers(); //	FASE 3.2	1) Limpio todos los marcadores
+	if (first_time || filter =='all') {
 		first_time = false
-		filter ='all'
-	}
-	if(filter =='all'){
 		data_markers.forEach(x => {marker = new L.marker([x.lat,x.lng])
 			.bindPopup('<h2>'+ x.name+'</h2> <p>'+ x.adress + '</p> <br> <img src=images/'+ x.photo+'></img>');
-				markers.addLayer(marker)
-		});
+			markers.addLayer(marker)});
 	}
-	else{ //	2) Realizo un bucle para decidir que marcadores cumplen el filtro, y los agregamos al mapa
-		for(let i =0; i< data_markers.length;i++){
-			let selector = data_markers[i].kind.includes(filter)
-			if(selector){
-				marker = new L.marker([data_markers[i].lat,data_markers[i].lng])
-					.bindPopup('<h2>'+ data_markers[i].name+'</h2> <p>'+ data_markers[i].adress + '</p> <br> <img src=images/'+ data_markers[i].photo+'></img>')
-					markers.addLayer(marker)
-			}
+ 	//	2) Realizo un bucle para decidir que marcadores cumplen el filtro, y los agregamos al mapa
+	for(let i =0; i< data_markers.length;i++){
+		if(data_markers[i].kind.includes(filter)){
+			marker = new L.marker([data_markers[i].lat,data_markers[i].lng])
+				.bindPopup('<h2>'+ data_markers[i].name+'</h2> <p>'+ data_markers[i].adress + '</p> <br> <img src=images/'+ data_markers[i].photo+'></img>')
+				markers.addLayer(marker)
 		}
 	}
 	map.addLayer(markers);
