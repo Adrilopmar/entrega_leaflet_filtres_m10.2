@@ -6,8 +6,7 @@ let first_time = true;
 let marker = L.marker();
 var map = L.map('mapid').on('load', onMapLoad).locate({setView: true,maxZoom: 17,}, 17);
 var tiles = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {}).addTo(map);
-//	FASE 3.1 //get all data from API
-async function getINF(){
+async function getINF(){ //	FASE 3.1 //get all data from API
 	const resp = await fetch(api_URL)
 	const data = await resp.json()
 	// sorting the data 
@@ -42,34 +41,31 @@ $('#kind_food_selector').on('change', function() {
   render_to_map(data_markers, this.value);
 });
 function render_to_map(data_markers, filter){
-	if (first_time) {
-		first_time = false
-		filter = 'all'
-	}
-//	FASE 3.2	1) Limpio todos los marcadores
-	if(marker){
+	if(marker){ //	FASE 3.2	1) Limpio todos los marcadores
 		markers.clearLayers();
 	}
-	//	2) Realizo un bucle para decidir que marcadores cumplen el filtro, y los agregamos al mapa
-	if (filter !== 'all'){
-		for(let i =0; i< data_markers.length;i++){
-			for(let y=0; y<data_markers[i].kind.length;y++){
-				if( filter == data_markers[i].kind[y]){
-					marker = new L.marker([data_markers[i].lat,data_markers[i].lng])
-					.bindPopup('<h2>'+ data_markers[i].name+'</h2> <p>'+ data_markers[i].adress + '</p> <br> <img src=images/'+ data_markers[i].photo+'></img>')
-					markers.addLayer(marker)
-				}
-			}
-		}
+	if (first_time) {
+		first_time = false
+		filter ='all'
 	}
-	else{
+	if(filter =='all'){
 		data_markers.forEach(x => {marker = new L.marker([x.lat,x.lng])
 			.bindPopup('<h2>'+ x.name+'</h2> <p>'+ x.adress + '</p> <br> <img src=images/'+ x.photo+'></img>');
 				markers.addLayer(marker)
 		});
 	}
+	else{ //	2) Realizo un bucle para decidir que marcadores cumplen el filtro, y los agregamos al mapa
+		for(let i =0; i< data_markers.length;i++){
+			let selector = data_markers[i].kind.includes(filter)
+			if(selector){
+				marker = new L.marker([data_markers[i].lat,data_markers[i].lng])
+					.bindPopup('<h2>'+ data_markers[i].name+'</h2> <p>'+ data_markers[i].adress + '</p> <br> <img src=images/'+ data_markers[i].photo+'></img>')
+					markers.addLayer(marker)
+			}
+		}
+	}
 	map.addLayer(markers);
 }
-marker.on('click'(function (e) { 
+marker.on('click',function () { 
 	marker.openPopup()
-}))
+})
