@@ -2,7 +2,6 @@ const api_URL = 'http://localhost/mapa/api/apiRestaurants.php'
 var data_markers = [];
 var markers = L.markerClusterGroup(); //en el clusters almaceno todos los markers
 let kind = [];
-let first_time = true;
 let marker = L.marker();
 var map = L.map('mapid').on('load', onMapLoad).locate({setView: true,maxZoom: 17,}, 17);
 var tiles = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {}).addTo(map);
@@ -42,17 +41,11 @@ $('#kind_food_selector').on('change', function() {
 });
 function render_to_map(data_markers, filter){
 	markers.clearLayers(); //	FASE 3.2	1) Limpio todos los marcadores
-	if (first_time || filter =='all') {
-		first_time = false
-		data_markers.forEach(x => {marker = new L.marker([x.lat,x.lng])
-			.bindPopup('<h2>'+ x.name+'</h2> <p>'+ x.adress + '</p> <br> <img src=images/'+ x.photo+'></img>');
-			markers.addLayer(marker)});
-	}
  	//	2) Realizo un bucle para decidir que marcadores cumplen el filtro, y los agregamos al mapa
 	for(let i =0; i< data_markers.length;i++){
-		if(data_markers[i].kind.includes(filter)){
+		if(data_markers[i].kind.includes(filter)|| filter =='all'){
 			marker = new L.marker([data_markers[i].lat,data_markers[i].lng])
-				.bindPopup('<h2>'+ data_markers[i].name+'</h2> <p>'+ data_markers[i].adress + '</p> <br> <img src=images/'+ data_markers[i].photo+'></img>')
+				.bindPopup('<h2>'+ data_markers[i].name+'</h2> <p>'+ data_markers[i].adress + '</p> <br> <img src="images/'+ data_markers[i].photo+'"/>')
 				markers.addLayer(marker)
 		}
 	}
